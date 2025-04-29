@@ -16,10 +16,9 @@
 102 sc = 1024:rem                               1st Screen Address
 105 for c0 = 0 to 39
 106 bu = int(rnd(5)*7)+18
-107 bl = int(rnd(7)*2) + 30:rem                 random blocks, either char 30 or 31
 108 for ro = bu to 24
-109 pl = sc + ro*40 + c0
-111 poke pl, bl : rem                            building blocks
+109 pl =sc+ro*40+c0
+111 poke pl,30: rem                             building block
 113 poke pl+54272,11
 115 next:next
 125 for f = 1984 to 2023:pokef,160:pokef+54272,11:next
@@ -84,7 +83,7 @@
 5000 end
 
 7000 rem  *****************************************************************
-7002 rem  ** SUBROUTINE                     SOUNDS     
+7002 rem  ** SUBROUTINE                     LOAD CHARACTERS      
 7004 rem  *****************************************************************
 7006 poke d1,11:poke p1,3:poke g1,129
 7008 for f= 1to8
@@ -97,30 +96,29 @@
 
 
 10000 rem  *****************************************************************
-10002 rem  ** SUBROUTINE                     SPEED LOAD CHARACTERS      
-10003 rem  ** Thanks to https://www.c64-wiki.de/wiki/Zeichen#Zeichenprogrammierung
+10002 rem  ** SUBROUTINE                     LOAD CHARACTERS      
 10004 rem  *****************************************************************
+10006 rem copy routine
 10008 for i=0 to 26: read x: poke 828+i,x: next i
 10010 data 169,000,160,208,133,095,132,096 : rem lda #0; ldy #$d0; sta 95, sty 96
 10012 data 169,000,160,224,133,090,132,091 : rem lda #0; ldy #$e0; sta 90; sty 91
 10014 data 169,000,160,064,133,088,132,089 : rem lda #0; ldy #$40; sta 88; sty 89
 10016 data 076,191,163 : rem jmp $a3bf
-10018 rem copy $d000-$dfff -> $3000-$3fff
-10020 rem Transfer character set to RAM
-10022 poke 56334,peek(56334) and 254 : rem interrupt OFF
-10024 poke 1,peek(1) and 251 : rem zs rom einblenden
-10026 sys 828 : rem COPY
-10028 poke 1,peek(1) or 4 : rem HIDE ROM
-10030 poke 56334,peek(56334) or 1 : rem interrupt ON
-10032 poke 53272,peek(53272) and 240 or 12 : rem $d018 set, character set in RAM at $3000
-10034 rem new characters set
-10036 for a=12504 to 12543: read ze: poke a,ze: poke a+1024,255-ze: next a
-10038 data 7,129,194,255,113,31,7,8 : rem new character back of plane (91 -27)
-10040 data 240,33,93,254,253,225,32,16 : rem front of the plane (92-28)
-10042 data 60,24,60,60,126,126,60,24 : rem bomb (93-29)
-10044 data 255,129,173,173,173,173,173,129 : rem building (94-30)
-10046 data 126,114,114,102,102,102,78,78 : rem b2 (95-31)
-10047 return
+10018 rem copied $d000-$dfff -> $3000-$3fff
+10020 rem transferring character set to ram
+10022 poke 56334,peek(56334) and 254 : rem interrupt off
+10024 poke 1,peek(1) and 251 : rem show rom
+10026 sys 828 : rem copy
+10028 poke 1,peek(1) or 4 : rem zs rom hide
+10030 poke 56334,peek(56334) or 1 : rem interrupt on
+10032 poke 53272,peek(53272) and 240 or 12 : rem $d018 set, character set in ram at $3000
+10034 rem data for character in game
+10036 for a=12504 to 12535: read ze: poke a,ze: poke a+1024,255-ze: next a
+10038 data 7,129,194,255,113,31,7,8:            rem back of plane       = [
+10040 data 240,33,93,254,253,225,32,16:         rem front of the plane  = £
+10042 data 60,24,60,60,126,126,60,24:           rem bomb                = ]
+10044 data 255,129,173,173,173,173,173,129:     rem building            = ^
+10046 return
 10048 rem ***********  END SUBROUTINE ******************************
 
 15000 rem  *****************************************************************
